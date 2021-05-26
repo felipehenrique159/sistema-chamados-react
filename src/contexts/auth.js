@@ -1,6 +1,6 @@
 import {useState, createContext, useEffect} from 'react'
 import firebase from '../services/firebaseConnection'
-
+import {toast} from 'react-toastify'
 export const AuthContext = createContext({
 
 })
@@ -51,6 +51,7 @@ function AuthProvider({children}){
                 setUser(data)
                 storageUser(data)
                 setLoadingAuth(false)
+                toast.success('Bem vindo a plataforma')
             })
             .catch((e)=>{
                 console.log(e);
@@ -95,7 +96,7 @@ function AuthProvider({children}){
             setUser(data)
             storageUser(data)
             setLoadingAuth(false)
-
+            toast.success('Bem vindo de volta :)')
         })
         .catch((e)=>{
             console.log(e);
