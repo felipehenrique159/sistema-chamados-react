@@ -8,7 +8,7 @@ export const AuthContext = createContext({
 function AuthProvider({children}){
 
     const [user,setUser] = useState(null)
-    const [loadingAuth,setLoadingAith] = useState(false)
+    const [loadingAuth,setLoadingAuth] = useState(false)
     const [loading,setLoading] = useState(true)
 
     useEffect(()=>{
@@ -28,8 +28,85 @@ function AuthProvider({children}){
 
     },[])
 
+    async function signUp(nome,email,password){
+        setLoadingAuth(true)
+        await firebase.auth().createUserWithEmailAndPassword(email,password)
+        .then(async(res)=>{
+
+            let uid = res.user.uid
+            
+            await firebase.firestore().collection('users')
+            .doc(uid)
+            .set({
+                nome:nome,
+                avatarUrl:null
+            })
+            .then(()=>{
+                let data = {
+                    uid : uid,
+                    nome:nome,
+                    email:  res.user.email,
+                    avatarUrl: null
+                }
+                setUser(data)
+                storageUser(data)
+                setLoadingAuth(false)
+            })
+            .catch((e)=>{
+                console.log(e);
+                setLoadingAuth(false)
+            })
+        }).catch((e)=>{
+            console.log(e);
+            setLoadingAuth(false)
+        })
+    }
+
+    function storageUser(data){
+        localStorage.setItem('SistemaUser',JSON.stringify(data))
+    }
+
+    async function logout() { 
+        await firebase.auth().signOut()
+        .then(()=>{
+          localStorage.removeItem('SistemaUser')
+          setUser(null)
+        })
+       
+       }
+
+    async function signIn(email,password){
+        setLoadingAuth(true)
+        await firebase.auth().signInWithEmailAndPassword(email,password)
+        .then( async(res)=>{
+            let uid = res.user.uid
+            const userProfile = await firebase.firestore().collection('users')
+            .doc(uid).get()
+            console.log(userProfile.data());
+            let data = {
+                uid:uid,
+                nome: userProfile.data().nome,
+                avatarUrl: userProfile.data().avatarUrl,
+                email: email
+
+            }
+            console.log(data);
+
+            setUser(data)
+            storageUser(data)
+            setLoadingAuth(false)
+
+        })
+        .catch((e)=>{
+            console.log(e);
+            setLoadingAuth(false)
+        })
+    }
+
+    
+
     return(
-        <AuthContext.Provider value={{ signed: !! user, user , loading }}> 
+        <AuthContext.Provider value={{ signed: !! user, user , loading, signUp,logout,signIn,loadingAuth}}> 
             {children}
         </AuthContext.Provider>
     )
