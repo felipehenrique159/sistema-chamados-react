@@ -99,7 +99,18 @@ function AuthProvider({children}){
             toast.success('Bem vindo de volta :)')
         })
         .catch((e)=>{
-            console.log(e);
+            // console.log(e.code);
+            if(e.code === 'auth/wrong-password'){
+                toast.error('Usuario ou senha incorreta!')
+            }
+            else if(e.code === 'auth/too-many-requests'){
+                toast.error('Muitas tentativa de erro, aguarte uns instantes!')
+            }
+            
+            else if(e.code === 'auth/invalid-email' || e.code === 'auth/user-not-found'){
+                toast.error('E-mail inválido!')
+            }
+        
             setLoadingAuth(false)
         })
     }
@@ -107,7 +118,9 @@ function AuthProvider({children}){
     
 
     return(
-        <AuthContext.Provider value={{ signed: !! user, user , loading, signUp,logout,signIn,loadingAuth}}> 
+        <AuthContext.Provider value={{ signed: !! user,
+         user , loading, signUp,logout,signIn,loadingAuth
+         ,setUser,storageUser}}> 
             {children}
         </AuthContext.Provider>
     )
