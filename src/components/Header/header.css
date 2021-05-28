@@ -27,9 +27,11 @@
     display: block;
     margin: auto;
     height: 90px;
+    width: 50%;
     -webkit-filter: drop-shadow(2px 3px 6px #121212);
     filter: drop-shadow(2px 3px 6px #121212);
     object-fit: cover;
+
 }
 
 .sidebar a{
