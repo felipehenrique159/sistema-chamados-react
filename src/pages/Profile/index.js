@@ -23,9 +23,8 @@ export default function Profile(){
 
         if(imagemAvatar === null && nome != null){
             setLoadingButtons(true)
-             await firebase.database().ref().child('users/' + user.uid).set({
+             await firebase.database().ref().child('users/' + user.uid).update({
                 nome: nome,
-                avatarUrl: ''
              })
              .then(()=>{
                 let data ={
@@ -97,6 +96,7 @@ export default function Profile(){
                      }
                      setUser(data)
                      storageUser(data)
+                     setImagemAvatar(null)
                  })
             })
         })
