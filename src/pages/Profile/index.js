@@ -11,7 +11,7 @@ import { toast } from 'react-toastify'
 
 export default function Profile(){
 
-    const {user, logout,setUser,storageUser} = useContext(AuthContext)
+    const {user,loadingButtons,setLoadingButtons, logout,setUser,storageUser,} = useContext(AuthContext)
     const [nome,setNome] = useState(user && user.nome)
     const [email,setEmail] = useState(user && user.email)
     const [avatarUrl,setAvatarUrl] = useState(user && user.avatarUrl)
@@ -22,20 +22,25 @@ export default function Profile(){
         console.log('salvando');
 
         if(imagemAvatar === null && nome != null){
-            console.log('if');
-             await firebase.firestore().collection('users')
-             .doc(user.uid).update({
-                 nome:nome
-             }).
-             then(()=>{
-                 let data ={
-                     ...user,
-                     nome:nome
-                 }
-
-                 setUser(data)
-                 storageUser(data)
-                 toast.info('Dados atualizados')
+            setLoadingButtons(true)
+             await firebase.database().ref().child('users/' + user.uid).set({
+                nome: nome,
+                avatarUrl: ''
+             })
+             .then(()=>{
+                let data ={
+                             ...user,
+                             nome:nome
+                         }
+        
+                setUser(data)
+                storageUser(data)
+                toast.info('Dados atualizados')
+                setLoadingButtons(false)
+             })
+             .catch((e)=>{
+                 console.log(e);
+                 setLoadingButtons(false)
              })
         }
     }
@@ -57,7 +62,7 @@ export default function Profile(){
                     </span>
 
                     <input type="file" accept="image/*"/> <br />
-                    {avatarUrl === null ? 
+                    {avatarUrl === '' ? 
                         <img src={avatar} width="250" height="250" alt="foto avatar" />
                         :
                         <img src={avatarUrl} width="250" height="250" alt="foto avatar" />
@@ -70,7 +75,7 @@ export default function Profile(){
                     <label>Email</label>
                     <input type="text" value={email} onChange={e => setEmail(e.target.value)} disabled/>
 
-                    <button type="submit" onClick={handleSave}>Salvar</button>
+                    <button type="submit" onClick={handleSave}>{loadingButtons ? 'Salvando...' : 'Salvar'}</button>
                 </form>
             </div>
 
