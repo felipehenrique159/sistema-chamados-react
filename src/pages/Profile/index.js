@@ -43,7 +43,7 @@ export default function Profile(){
                  setLoadingButtons(false)
              })
         }
-        else if(imagemAvatar !== null && nome != null){
+        else if(imagemAvatar !== null && nome !== null){
             handleUpload()
         }
     }

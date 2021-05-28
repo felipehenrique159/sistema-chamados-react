@@ -23,8 +23,11 @@ export default function New(){
     async function handleRegister(e){
         e.preventDefault()
         
+        let now = new Date();
+        let dataAtual = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`
+        
         await firebase.database().ref().child('chamados/' + uid(16)).set({
-            created: new Date(),
+            created: dataAtual,
             cliente : customers[customersSelected].nomeFantasia,
             clienteId:customers[customersSelected].id,
             assunto : assunto,
