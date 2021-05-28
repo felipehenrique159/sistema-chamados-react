@@ -39,7 +39,7 @@ export default function Profile(){
                 setLoadingButtons(false)
              })
              .catch((e)=>{
-                 console.log(e);
+                //  console.log(e);
                  setLoadingButtons(false)
              })
         }
@@ -64,14 +64,23 @@ export default function Profile(){
     }
 
     async function handleUpload(){
+       
         await firebase.storage().ref(`images/${user.uid}/${imagemAvatar.name}`)
         .put(imagemAvatar)
         .then(async()=>{
             toast.success('Foto atualizada')
         
             if(user.fotoAntiga !== ''){ 
-                await firebase.storage().ref(`images/${user.uid}/${user.fotoAntiga}`).delete()
+                //verifica se existe antes de tentar exluir
+                await firebase.storage().ref(`images/${user.uid}/${user.fotoAntiga}`).getDownloadURL()
+                .then(async(res)=>{
+                    await firebase.storage().ref(`images/${user.uid}/${user.fotoAntiga}`).delete()
+                })
+                .catch((e)=>{
+                    console.log(e);
+                })
             }
+
             await firebase.storage().ref(`images/${user.uid}`)
             .child(imagemAvatar.name).getDownloadURL()
             .then(async(url)=>{
