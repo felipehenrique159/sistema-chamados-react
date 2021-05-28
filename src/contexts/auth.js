@@ -114,12 +114,34 @@ function AuthProvider({children}){
         })
     }
 
+    async function resetPassword(email){
+        setLoadingAuth(true)
+        await firebase.auth().sendPasswordResetEmail(email)
+        .then(()=>{
+            setLoadingAuth(false)
+            toast.info('O link para redefinição foi enviado no E-mail')
+        })
+        .catch((e)=>{
+            console.log(e.code);
+            setLoadingAuth(false)
+            if(e.code == 'auth/too-many-requests'){
+                toast.error('Muitas tentativas aguarde uns instantes')
+            }
+            if(e.code == 'auth/user-not-found'){
+                toast.error('Endereço de e-mail não cadastrado')
+            }
+            if(e.code == 'auth/invalid-email'){
+                toast.error('Endereço de e-mail inválido')
+            }
+        })
+    }
+
     
 
     return(
         <AuthContext.Provider value={{ signed: !! user,
          user , loadingButtons,setLoadingButtons ,  signUp,logout,signIn,loadingAuth
-         ,setUser,storageUser}}> 
+         ,resetPassword,setUser,storageUser}}> 
             {children}
         </AuthContext.Provider>
     )

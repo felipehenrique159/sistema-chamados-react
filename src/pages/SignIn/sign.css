@@ -61,7 +61,23 @@ form button{
 }
 
 .login a{
-    margin: 1.5rem 0;
+    margin: 1.2rem 0;
     cursor: pointer;
     color: #000;
+}
+
+.btnResetPassword{
+    border: 0;
+    background: #EAEAEC;
+    margin-left: 5px;
+    font-size: 0.9rem;
+}
+
+.btnGroup{
+    margin-top: 1.2rem;
+    display: flex;
+    justify-content: center;
+    background: #EAEAEC;
+    padding: 2px;
+    align-items: center;
 }
