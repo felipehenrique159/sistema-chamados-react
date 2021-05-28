@@ -19,8 +19,7 @@ export default function Customers(){
         if(nomeFantasia !== '' && cnpj !== '' && endereco !== ''){
             let caminho = 'customers/' + uid(16);
             let id = caminho.split('/')
-            await firebase.database().ref(caminho).set({
-                id : id[1],
+            await firebase.database().ref('customers/' + uid(16)).set({
                 nomeFantasia: nomeFantasia,
                 cnpj:cnpj,
                 endereco:endereco
@@ -34,34 +33,7 @@ export default function Customers(){
             .catch((e)=>{
                 console.log(e);
                 toast.error('Erro ao cadastrar!')
-            })
-
-           
-                // await firebase.database().ref('customers/' + uid(16)).child(cnpj).get()
-                // .then(async(res)=>{
-                //     console.log(res.val());
-                //     if(res.val()){
-                //         toast.error('Cnpj cadastrado')
-                //     }
-                //     else{       
-                //             await firebase.database().ref('customers').child(cnpj).set({
-                //                 nomeFantasia: nomeFantasia,
-                //                 cnpj:cnpj,
-                //                 endereco:endereco
-                //             })
-                //             .then(()=>{
-                //                 setCnpj('')
-                //                 setEndereco('')
-                //                 setNomeFantasia('')
-                //                 toast.success('Cliente cadastrado com sucesso!')
-                //             })
-                //             .catch((e)=>{
-                //                 console.log(e);
-                //                 toast.error('Erro ao cadastrar!')
-                //             })
-                //     }
-                // })
-            
+            })            
          
         }
         else{

@@ -77,7 +77,7 @@ export default function New(){
 
                 res.forEach((dados)=>{
                     lista.push({
-                        id: dados.val().id,
+                        id: dados.key,
                         nomeFantasia:dados.val().nomeFantasia,
                     })
                 })

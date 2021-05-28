@@ -1,10 +1,11 @@
-import {useState, useContext} from 'react'
+import {useState, useContext, useEffect} from 'react'
 import {AuthContext} from '../../contexts/auth'
 import Header from '../../components/Header'
 import {FiMessageSquare,FiPlus,FiSearch,FiEdit2} from 'react-icons/fi'
 import Title from '../../components/Title'
 import {Link} from 'react-router-dom'
 import './dashboard.css'
+import firebase from '../../services/firebaseConnection'
 
 export default function Dashboard() {
 
@@ -15,6 +16,37 @@ export default function Dashboard() {
     logout()
   }
 
+  useEffect(()=>{
+    
+    async function loadChamados() {
+      await firebase.database().ref('chamados').get()
+      .then((res)=>{
+        let lista = []
+  
+          res.forEach((chamado)=>{
+            lista.push({
+              id : chamado.key,
+              assunto : chamado.val().assunto,
+              cliente : chamado.val().cliente,
+              clienteId : chamado.val().clienteId,
+              complemento : chamado.val().complemento,
+              created : chamado.val().created,
+              status : chamado.val().status,
+              userId : chamado.val().userId
+            })
+           
+          })
+          setChamados(lista)
+      })
+      .catch((e)=>{
+        console.log(e);
+      })
+    } 
+
+    loadChamados()
+
+  },[])
+
     return (
       <div>
         <Header/>
@@ -22,8 +54,9 @@ export default function Dashboard() {
               <Title nome="Atendimentos">
                     <FiMessageSquare size={25}/>
               </Title>
+              
 
-          {chamados.length !== 0 ? (
+          {chamados.length === 0 ? (
              <div className="container dashboard">
                 <span>Nenhum chamado registrado</span>
                 <Link to="/new" className="new">
@@ -49,22 +82,29 @@ export default function Dashboard() {
                     </tr>
                   </thead>
                   <tbody>
-                      <tr>
-                        <td data-label="Cliente">Sujeito</td>
-                        <td data-label="Suporte">Suporte</td>
-                        <td data-label="Status">
-                          <span className="badge" style={{backgroundColor: '#5cb85c'}}>Em aberto</span>
-                        </td>
-                        <td data-label="Cadastrado">20-06-2021</td>
-                        <td data-label="#">
-                            <button className="action" style={{backgroundColor :'#3583f6'}}>
-                              <FiSearch color="#FFF" size={17}/>
-                            </button>
-                            <button className="action" style={{backgroundColor : '#F6a935'}}>
-                              <FiEdit2 color="#FFF" size={17}/>
-                            </button>
-                        </td>
-                      </tr>
+                   {chamados.map((chamado)=>{
+                     return(
+
+                      <tr key={chamado.id}>
+                      <td data-label="Cliente">{chamado.cliente}</td>
+                      <td data-label="Suporte">{chamado.assunto}</td>
+                      <td data-label="Status">
+                        <span className="badge" style={{backgroundColor: '#5cb85c'}}>{chamado.status}</span>
+                      </td>
+                      <td data-label="Cadastrado">{chamado.created}</td>
+                      <td data-label="#">
+                          <button className="action" style={{backgroundColor :'#3583f6'}}>
+                            <FiSearch color="#FFF" size={17}/>
+                          </button>
+                          <button className="action" style={{backgroundColor : '#F6a935'}}>
+                            <FiEdit2 color="#FFF" size={17}/>
+                          </button>
+                      </td>
+                    </tr>
+
+                     )
+                   })}
+                      
                   </tbody>
                 </table>
 
