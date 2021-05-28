@@ -42,7 +42,8 @@ function AuthProvider({children}){
                             uid : uid,
                             nome:nome,
                             email:  res.user.email,
-                            avatarUrl: ''
+                            avatarUrl: '',
+                            fotoAntiga:''
                         }
                         setUser(data)
                         storageUser(data)
@@ -84,7 +85,8 @@ function AuthProvider({children}){
             let data = {
                 uid:uid,
                 nome: res.val().nome,
-                avatarUrl: res.val().avatarUrl,
+                avatarUrl: res.val().avatarUrl ? res.val().avatarUrl : '',
+                fotoAntiga: res.val().urlFotoAntiga ? res.val().urlFotoAntiga : '',
                 email: email
 
             }

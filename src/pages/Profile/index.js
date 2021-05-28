@@ -19,7 +19,7 @@ export default function Profile(){
 
     async function handleSave(e){
         e.preventDefault()
-        console.log('salvando');
+       
 
         if(imagemAvatar === null && nome != null){
             setLoadingButtons(true)
@@ -43,6 +43,57 @@ export default function Profile(){
                  setLoadingButtons(false)
              })
         }
+        else if(imagemAvatar !== null && nome != null){
+            handleUpload()
+        }
+    }
+
+    function handleFile(e){
+        if(e.target.files[0]){
+            const image = e.target.files[0]
+            if(image.type === 'image/jpeg' || image.type === 'image/png'){
+                setImagemAvatar(image)
+                setAvatarUrl(URL.createObjectURL(e.target.files[0]))
+            }
+            else{
+                toast.error('A foto deve ser Png ou Jpeg')
+                setImagemAvatar(null)
+                return null
+            }
+        }
+    }
+
+    async function handleUpload(){
+        await firebase.storage().ref(`images/${user.uid}/${imagemAvatar.name}`)
+        .put(imagemAvatar)
+        .then(async()=>{
+            toast.success('Foto atualizada')
+        
+            if(user.fotoAntiga !== ''){ 
+                await firebase.storage().ref(`images/${user.uid}/${user.fotoAntiga}`).delete()
+            }
+            await firebase.storage().ref(`images/${user.uid}`)
+            .child(imagemAvatar.name).getDownloadURL()
+            .then(async(url)=>{
+                await firebase.database().ref().child('users/' + user.uid).update({
+                    avatarUrl: url,
+                    fotoAntiga:imagemAvatar.name,
+                    nome:nome
+                 })
+                 .then(()=>{
+                     let data = {
+                         ...user,
+                         avatarUrl : url,
+                         fotoAntiga:imagemAvatar.name
+                     }
+                     setUser(data)
+                     storageUser(data)
+                 })
+            })
+        })
+        .catch((e)=>{
+            console.log(e);
+        })
     }
 
     return(
@@ -61,7 +112,7 @@ export default function Profile(){
                         <FiUpload size={25} color="#FFF"/>
                     </span>
 
-                    <input type="file" accept="image/*"/> <br />
+                    <input type="file" accept="image/*" onChange={handleFile}/> <br />
                     {avatarUrl === '' ? 
                         <img src={avatar} width="250" height="250" alt="foto avatar" />
                         :
