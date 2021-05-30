@@ -3,6 +3,7 @@ import {useState, useContext} from 'react'
 import logo from '../../assets/logo.png'
 import {Link} from 'react-router-dom'
 import {AuthContext} from '../../contexts/auth'
+import { toast } from 'react-toastify'
 
 export default function SignUp() {
 
@@ -16,6 +17,9 @@ export default function SignUp() {
     e.preventDefault()
     if(nome !== '' && email !== '' && password !==''){
       signUp(nome,email,password)
+    }
+    else{
+      toast.error('Preencha todos os campos!')
     }
   }
 

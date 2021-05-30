@@ -56,6 +56,17 @@ function AuthProvider({children}){
 
         }).catch((e)=>{
             console.log(e);
+            if(e.code === 'auth/invalid-email'){
+                toast.error('E-mail inválido')
+            }
+            
+            else if(e.code === 'auth/weak-password'){
+                toast.error('Senha muito fraca')
+            }
+            
+            else if(e.code === 'auth/email-already-in-use'){
+                toast.error('E-mail já cadastrado')
+            }
             setLoadingAuth(false)
         })
     }
