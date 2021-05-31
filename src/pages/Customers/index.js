@@ -22,29 +22,44 @@ export default function Customers(){
     async function handleCadastar(e){
         e.preventDefault()
         if(nomeFantasia !== '' && cnpj !== ''){
-            let caminho = 'customers/' + uid(16);
-            let id = caminho.split('/')
-            await firebase.database().ref('customers/' + uid(16)).set({
-                nomeFantasia: nomeFantasia,
-                cnpj:cnpj,
-                logradouro:logradouro,
-                numero:numero,
-                bairro:bairro,
-                cidade:cidade
+
+            await firebase.database().ref('customers').get()
+            .then(async(res)=>{
+                let cnpjExistente = false
+                res.forEach((customer)=>{
+                    console.log(customer.val().cnpj);
+                    if(customer.val().cnpj === cnpj){
+                        cnpjExistente = true
+                        toast.error('Cnpj já cadastrado')
+                    }
+                })
+
+                if(!cnpjExistente){
+                    await firebase.database().ref('customers/' + uid(16)).set({
+                        nomeFantasia: nomeFantasia,
+                        cnpj:cnpj,
+                        logradouro:logradouro,
+                        numero:numero,
+                        bairro:bairro,
+                        cidade:cidade
+                    })
+                    .then(()=>{
+                        setCnpj('')
+                        setLogradouro('')
+                        setNomeFantasia('')
+                        setBairro('')
+                        setNumero('')
+                        setCidade('')
+                        toast.success('Cliente cadastrado com sucesso!')
+                    })
+                    .catch((e)=>{
+                        console.log(e);
+                        toast.error('Erro ao cadastrar!')
+                    })  
+                }
+
             })
-            .then(()=>{
-                setCnpj('')
-                setLogradouro('')
-                setNomeFantasia('')
-                setBairro('')
-                setNumero('')
-                setCidade('')
-                toast.success('Cliente cadastrado com sucesso!')
-            })
-            .catch((e)=>{
-                console.log(e);
-                toast.error('Erro ao cadastrar!')
-            })            
+          
          
         }
         else{
