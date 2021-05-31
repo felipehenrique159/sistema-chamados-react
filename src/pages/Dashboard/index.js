@@ -1,6 +1,7 @@
 import {useState, useContext, useEffect} from 'react'
 import {AuthContext} from '../../contexts/auth'
 import Header from '../../components/Header'
+import ModalChamado from '../../components/ModalChamado'
 import {FiMessageSquare,FiPlus,FiSearch,FiEdit2} from 'react-icons/fi'
 import Title from '../../components/Title'
 import {Link} from 'react-router-dom'
@@ -11,6 +12,8 @@ export default function Dashboard() {
 
   const {user,logout} = useContext(AuthContext)
   const [chamados,setChamados] = useState([])
+  const [showPostModal,setShowPostModal] = useState(false)
+  const [detail,setDetail] = useState()
 
   function handleLogout(){
     logout()
@@ -22,7 +25,7 @@ export default function Dashboard() {
       await firebase.database().ref('chamados').get()
       .then((res)=>{
         let lista = []
-  
+
           res.forEach((chamado)=>{
             lista.push({
               id : chamado.key,
@@ -46,6 +49,12 @@ export default function Dashboard() {
     loadChamados()
 
   },[])
+
+
+  function togglePostModal(chamado){
+    setShowPostModal(!showPostModal) //trocando de true pra false ou vice versa
+    setDetail(chamado)
+  }
 
     return (
       <div>
@@ -89,11 +98,11 @@ export default function Dashboard() {
                       <td data-label="Cliente">{chamado.cliente}</td>
                       <td data-label="Suporte">{chamado.assunto}</td>
                       <td data-label="Status">
-                        <span className="badge" style={{backgroundColor: '#5cb85c'}}>{chamado.status}</span>
+                        <span className="badge" style={{backgroundColor: chamado.status === 'Aberto' ? '#5cb85c' : '#999'}}>{chamado.status}</span>
                       </td>
                       <td data-label="Cadastrado">{chamado.created}</td>
                       <td data-label="#">
-                          <button className="action" style={{backgroundColor :'#3583f6'}}>
+                          <button onClick={() =>{ togglePostModal(chamado)}} className="action" style={{backgroundColor :'#3583f6'}}>
                             <FiSearch color="#FFF" size={17}/>
                           </button>
                           <button className="action" style={{backgroundColor : '#F6a935'}}>
@@ -115,9 +124,12 @@ export default function Dashboard() {
 
           </div>
 
-         
+         {showPostModal && (
+           <ModalChamado chamado={detail}
+            close={togglePostModal}
+           />
+         )}
 
-         {/* <button onClick={handleLogout}>LOGOUT</button> */}
       </div>
     )
   }
