@@ -1,0 +1,12 @@
+.cnpj {
+    display: flex;
+    justify-content: space-between;
+
+}
+
+.cnpj span{
+    padding: 4px;
+}
+.cnpj svg{
+    margin-left: 6px;
+}
