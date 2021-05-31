@@ -55,29 +55,34 @@ export default function Customers(){
 
     async function buscarCnpjReceita(e) {
         e.preventDefault()
-        try {
-            // const response = await axios.get(`http://localhost:3002/buscaDadosReceita/${cnpj}`)       
-            const response = await axios.get(`https://60b50cb898de69e51d790ca6--optimistic-swartz-985c39.netlify.app/.netlify/functions/api/buscaDadosReceita/${cnpj}`)       
-            console.log(response.data) 
-            if(response.data.nome){
-                toast.info('Dados encontrados')
-                setNomeFantasia(response.data.nome)
-                setLogradouro(response.data.logradouro)
-                setNumero(response.data.numero)
-                setBairro(response.data.bairro)
-                setCidade(response.data.municipio)
-            }
-            else{
-                if(response.data.message == 'Request failed with status code 429'){
-                    toast.error('Erro ao consultar dados, aguarde ums instantes')
+        if(cnpj !== ''){
+            try {
+                // const response = await axios.get(`http://localhost:3002/buscaDadosReceita/${cnpj}`)       
+                const response = await axios.get(`https://60b50cb898de69e51d790ca6--optimistic-swartz-985c39.netlify.app/.netlify/functions/api/buscaDadosReceita/${cnpj}`)       
+                console.log(response.data) 
+                if(response.data.nome){
+                    toast.info('Dados encontrados')
+                    setNomeFantasia(response.data.nome)
+                    setLogradouro(response.data.logradouro)
+                    setNumero(response.data.numero)
+                    setBairro(response.data.bairro)
+                    setCidade(response.data.municipio)
                 }
                 else{
-                    toast.error(response.data.message)
+                    if(response.data.message == 'Request failed with status code 429'){
+                        toast.error('Erro ao consultar dados, aguarde ums instantes')
+                    }
+                    else{
+                        toast.error(response.data.message)
+                    }
                 }
+            } catch (error) {
+                toast.error('Erro ao consultar dados')
+                console.log(error);
             }
-        } catch (error) {
-            toast.error('Erro ao consultar dados')
-            console.log(error);
+        }
+        else{
+            toast.error('Preencher campo Cnpj')
         }
       
     }
