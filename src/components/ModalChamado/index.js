@@ -23,7 +23,7 @@ export default function ModalChamado({chamado,close}){
                         </span>
 
                         <span>
-                            Cadastrado em: <i>{chamado.created}</i>
+                           <br /> <br /> Cadastrado em: <i>{chamado.created}</i>
                         </span>
                     </div>
 
