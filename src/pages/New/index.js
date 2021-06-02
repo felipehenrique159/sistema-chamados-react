@@ -1,7 +1,8 @@
 import Header from '../../components/Header'
 import Title from '../../components/Title'
 import './new.css'
-import {FiPlusCircle} from 'react-icons/fi'
+import {FiPlusCircle,FiEdit} from 'react-icons/fi'
+import {useParams,useHistory} from 'react-router-dom'
 import {useEffect,useState,useContext} from 'react'
 import {AuthContext} from '../../contexts/auth'
 import firebase from '../../services/firebaseConnection'
@@ -18,35 +19,82 @@ export default function New(){
     const [status,setStatus] = useState('Aberto')
     const [complemento,setComplemento] = useState('')
     const {user} = useContext(AuthContext)
+    const {id} = useParams()
+    const history = useHistory()
+    const [idCustomers,setIdCustomers] = useState(false)
 
+    async function loadId(lista){
+        await firebase.database().ref().child('chamados/' + id).get()
+        .then((res)=>{
+            // console.log(res.val().);
+            setAssunto(res.val().assunto)
+            setStatus(res.val().status)
+            setComplemento(res.val().complemento)
+            
+            let index = lista.findIndex( 
+                item => item.id === res.val().clienteId
+                )
+            setCustomersSelected(index)
+            setIdCustomers(true)
+
+        })
+        .catch((e)=>{
+            setIdCustomers(false)
+            console.log(e);
+        })
+    }
 
     async function handleRegister(e){
         e.preventDefault()
-        
         let now = new Date();
         let dataAtual = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`
+
+        if(idCustomers){
+            await firebase.database().ref().child('chamados/' + id)
+            .update({ 
+                updated : dataAtual,
+                cliente : customers[customersSelected].nomeFantasia,
+                clienteId:customers[customersSelected].id,
+                assunto : assunto,
+                status : status,
+                complemento:complemento,
+                userId: user.uid
+            })
+            .then(()=>{
+                toast.success('Chamado atualizado')
+                setCustomersSelected(0)
+                history.replace('/')
+            })
+            .catch((e)=>{
+                console.log(e);
+                toast.error('Erro ao atualizar chamado')
+            })
+        }
+        else{ 
+            await firebase.database().ref().child('chamados/' + uid(16)).set({
+                created: dataAtual,
+                cliente : customers[customersSelected].nomeFantasia,
+                clienteId:customers[customersSelected].id,
+                assunto : assunto,
+                status : status,
+                complemento:complemento,
+                userId: user.uid
+            })
+            .then(()=>{
+                setComplemento('')
+                setCustomersSelected(0)
+                setAssunto('Suporte')
+                setStatus('Aberto')
+                toast.success('Chamado cadastrado com sucesso!')
+            })
+            .catch((e)=>{
+                console.log(e);
+                toast.error('Erro ao cadastrar chamado!')
+            })
+            console.log(customers[customersSelected]);
+            }
         
-        await firebase.database().ref().child('chamados/' + uid(16)).set({
-            created: dataAtual,
-            cliente : customers[customersSelected].nomeFantasia,
-            clienteId:customers[customersSelected].id,
-            assunto : assunto,
-            status : status,
-            complemento:complemento,
-            userId: user.uid
-        })
-        .then(()=>{
-            setComplemento('')
-            setCustomersSelected(0)
-            setAssunto('Suporte')
-            setStatus('Aberto')
-            toast.success('Chamado cadastrado com sucesso!')
-        })
-        .catch((e)=>{
-            console.log(e);
-            toast.error('Erro ao cadastrar chamado!')
-        })
-        console.log(customers[customersSelected]);
+        
     }
     
     function handleChangeSelect(e){
@@ -88,6 +136,10 @@ export default function New(){
                 }
                 setCustomers(lista)
                 setLoadCustomers(true)
+
+                if(id){
+                    loadId(lista)
+                }
             })
             .catch((e)=>{
                 console.log(e);
@@ -102,10 +154,16 @@ export default function New(){
         <div>
             <Header/>
             <div className="content">
+               { idCustomers ?
+                 <Title nome="Editar Chamado">
+                 <FiEdit size={25}/>
+                 </Title>
+                : 
                 <Title nome="Novo Chamados">
                     <FiPlusCircle size={25}/>
                 </Title>
-
+               
+            }
             <div className="container">
                 <form className="form-profile">
                     <label>Cliente</label>
@@ -148,7 +206,12 @@ export default function New(){
 
                     <label>Complemento</label>
                     <textarea type="text" placeholder="Descreva seu problema(Opcional)" value={complemento} onChange={e => setComplemento(e.target.value)}/>
-                    <button type="submit" onClick={handleRegister}>Cadastrar</button>
+                    <button type="submit" onClick={handleRegister}>
+                        {idCustomers ? 
+                            'Editar'
+                            : 'Registrar'
+                        }
+                    </button>
                 </form>
 
             </div>

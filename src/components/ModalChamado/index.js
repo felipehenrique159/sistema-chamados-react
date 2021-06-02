@@ -14,22 +14,22 @@ export default function ModalChamado({chamado,close}){
 
                     <div className="row">
                         <span>
-                            Cliente: <a>{chamado.cliente}</a>
+                            Cliente: <i>{chamado.cliente}</i>
                         </span>
                     </div>
                     <div className="row">
                         <span>
-                            Assunto: <a>{chamado.assunto}</a>
+                            Assunto: <i>{chamado.assunto}</i>
                         </span>
 
                         <span>
-                            Cadastrado em: <a>{chamado.created}</a>
+                            Cadastrado em: <i>{chamado.created}</i>
                         </span>
                     </div>
 
                     <div className="row">
                         <span>
-                            Status: <a style={{color : '#FFF' , backgroundColor : chamado.status === 'Aberto' ? '#5cb85c' : '#999'}}>{chamado.status}</a>
+                            Status: <i style={{color : '#FFF' , backgroundColor : chamado.status === 'Aberto' ? '#5cb85c' : '#999'}}>{chamado.status}</i>
                         </span>
                     </div>
 
