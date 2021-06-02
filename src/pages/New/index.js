@@ -47,7 +47,7 @@ export default function New(){
     async function handleRegister(e){
         e.preventDefault()
         let now = new Date();
-        let dataAtual = `${now.getDate()}/${now.getMonth()}/${now.getFullYear()}`
+        let dataAtual = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`
 
         if(idCustomers){
             await firebase.database().ref().child('chamados/' + id)

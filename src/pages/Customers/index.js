@@ -123,11 +123,11 @@ export default function Customers(){
                             <FiSearch/> <span>Buscar</span>
                         </button>
                         </div>
-                        <label>Nome Fantasia</label>
+                        <label>Razão Social</label>
                         <input type="text" value={nomeFantasia} onChange={e => setNomeFantasia(e.target.value)} />
-                        <label>logradouro</label>
+                        <label>Logradouro</label>
                         <input type="text" value={logradouro} onChange={e => setLogradouro(e.target.value)} />
-                        <label>Numero</label>
+                        <label>Número</label>
                         <input type="text" value={numero} onChange={e => setNumero(e.target.value)} />
                         <label>Bairro</label>
                         <input type="text" value={bairro} onChange={e => setBairro(e.target.value)} />

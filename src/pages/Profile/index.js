@@ -132,7 +132,7 @@ export default function Profile(){
                     <label>Nome</label>
                     <input type="text" value={nome} onChange={e => setNome(e.target.value)}/>
 
-                    <label>Email</label>
+                    <label>E-mail</label>
                     <input type="text" value={email} onChange={e => setEmail(e.target.value)} disabled/>
 
                     <button type="submit" onClick={handleSave}>{loadingButtons ? 'Salvando...' : 'Salvar'}</button>
