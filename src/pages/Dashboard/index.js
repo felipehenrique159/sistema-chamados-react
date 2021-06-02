@@ -22,9 +22,10 @@ export default function Dashboard() {
   useEffect(()=>{
     
     async function loadChamados() {
-      await firebase.database().ref('chamados').get()
-      .then((res)=>{
-        let lista = []
+     var dados = await firebase.database().ref('chamados')
+     dados.on('value', (res) => {  //evento para ficar em tempo real
+
+          let lista = []
 
           res.forEach((chamado)=>{
             lista.push({
@@ -40,14 +41,10 @@ export default function Dashboard() {
            
           })
           setChamados(lista)
-      })
-      .catch((e)=>{
-        console.log(e);
-      })
+    });
+     
     } 
-
     loadChamados()
-
   },[])
 
 
