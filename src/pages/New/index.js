@@ -195,7 +195,7 @@ export default function New(){
                     <label>Status</label>
                     <div className="status">
                         <input type="radio" name="radio" value="Aberto" onChange={handleOptionChange} checked={status === 'Aberto'}/>
-                        <span>Em Aberto</span>
+                        <span>Aberto</span>
                         
                         <input type="radio" name="radio" value="Progresso" onChange={handleOptionChange} checked={status === 'Progresso'}/>
                         <span>Progresso</span>
@@ -203,7 +203,7 @@ export default function New(){
                         <input type="radio" name="radio" value="Atendido" onChange={handleOptionChange} checked={status === 'Atendido'}/>
                         <span>Atendido</span>
                     </div>
-
+                    
                     <label>Complemento</label>
                     <textarea type="text" placeholder="Descreva seu problema(Opcional)" value={complemento} onChange={e => setComplemento(e.target.value)}/>
                     <button type="submit" onClick={handleRegister}>
