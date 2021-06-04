@@ -1,5 +1,4 @@
-import {useState, useContext, useEffect} from 'react'
-import {AuthContext} from '../../contexts/auth'
+import {useState, useEffect} from 'react'
 import Header from '../../components/Header'
 import ModalChamado from '../../components/ModalChamado'
 import {FiMessageSquare,FiPlus,FiSearch,FiEdit2} from 'react-icons/fi'
@@ -10,14 +9,9 @@ import firebase from '../../services/firebaseConnection'
 
 export default function Dashboard() {
 
-  const {user,logout} = useContext(AuthContext)
   const [chamados,setChamados] = useState([])
   const [showPostModal,setShowPostModal] = useState(false)
   const [detail,setDetail] = useState()
-
-  function handleLogout(){
-    logout()
-  }
 
   useEffect(()=>{
     

@@ -22,7 +22,7 @@ export default function Customers(){
     const [numero,setNumero] = useState('')
     const [bairro,setBairro] = useState('')
     const [cidade,setCidade] = useState('')
-    
+
     async function handleCadastar(e){
         e.preventDefault()
         setLoadingButtons(true)
@@ -91,7 +91,7 @@ export default function Customers(){
                     setCidade(response.data.municipio)
                 }
                 else{
-                    if(response.data.message == 'Request failed with status code 429'){
+                    if(response.data.message === 'Request failed with status code 429'){
                         toast.error('Erro ao consultar dados, aguarde ums instantes')
                     }
                     else{
