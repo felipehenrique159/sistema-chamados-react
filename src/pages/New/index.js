@@ -18,7 +18,7 @@ export default function New(){
     const [assunto,setAssunto] = useState('Suporte')
     const [status,setStatus] = useState('Aberto')
     const [complemento,setComplemento] = useState('')
-    const {user} = useContext(AuthContext)
+    const {user,loadingButtons,setLoadingButtons} = useContext(AuthContext)
     const {id} = useParams()
     const history = useHistory()
     const [idCustomers,setIdCustomers] = useState(false)
@@ -48,8 +48,8 @@ export default function New(){
         e.preventDefault()
         let now = new Date();
         let dataAtual = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`
-
-        if(idCustomers){
+        setLoadingButtons(true)
+        if(idCustomers){  //edição
             await firebase.database().ref().child('chamados/' + id)
             .update({ 
                 updated : dataAtual,
@@ -63,14 +63,16 @@ export default function New(){
             .then(()=>{
                 toast.success('Chamado atualizado')
                 setCustomersSelected(0)
+                setLoadingButtons(false)
                 history.replace('/')
             })
             .catch((e)=>{
                 console.log(e);
                 toast.error('Erro ao atualizar chamado')
+                setLoadingButtons(false)
             })
         }
-        else{ 
+        else{   //novo
             await firebase.database().ref().child('chamados/' + uid(16)).set({
                 created: dataAtual,
                 cliente : customers[customersSelected].nomeFantasia,
@@ -85,13 +87,14 @@ export default function New(){
                 setCustomersSelected(0)
                 setAssunto('Suporte')
                 setStatus('Aberto')
+                setLoadingButtons(false)
                 toast.success('Chamado cadastrado com sucesso!')
             })
             .catch((e)=>{
                 console.log(e);
                 toast.error('Erro ao cadastrar chamado!')
+                setLoadingButtons(false)
             })
-            console.log(customers[customersSelected]);
             }
         
         
@@ -208,9 +211,10 @@ export default function New(){
                     <textarea type="text" placeholder="Descreva seu problema(Opcional)" value={complemento} onChange={e => setComplemento(e.target.value)}/>
                     <button type="submit" onClick={handleRegister}>
                         {idCustomers ? 
-                            'Editar'
-                            : 'Registrar'
+                            loadingButtons ?'Salvando...' : 'Editar'
+                            : loadingButtons ? 'Salvando...' : 'Registrar'
                         }
+
                     </button>
                 </form>
 

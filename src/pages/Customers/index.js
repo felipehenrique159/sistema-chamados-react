@@ -9,8 +9,12 @@ import {toast} from 'react-toastify'
 import { uid } from 'uid'
 import axios from 'axios'
 import CpfCnpj from "@react-br-forms/cpf-cnpj-mask";
+import {useContext} from 'react'
+import {AuthContext} from '../../contexts/auth'
 
 export default function Customers(){
+
+    const {loadingButtons,setLoadingButtons} = useContext(AuthContext)
 
     const [nomeFantasia,setNomeFantasia] = useState('')
     const [cnpj,setCnpj] = useState('')
@@ -18,20 +22,20 @@ export default function Customers(){
     const [numero,setNumero] = useState('')
     const [bairro,setBairro] = useState('')
     const [cidade,setCidade] = useState('')
-  
+    
     async function handleCadastar(e){
         e.preventDefault()
-        
+        setLoadingButtons(true)
         if(nomeFantasia !== '' && cnpj !== ''){
 
             await firebase.database().ref('customers').get()
             .then(async(res)=>{
                 let cnpjExistente = false
                 res.forEach((customer)=>{
-                    // console.log(customer.val().cnpj);
                     if(customer.val().cnpj === cnpj.replace(/[^\d]+/g,'')){
                         cnpjExistente = true
                         toast.error('Cnpj já cadastrado')
+                        setLoadingButtons(false)
                     }
                 })
 
@@ -52,19 +56,22 @@ export default function Customers(){
                         setNumero('')
                         setCidade('')
                         toast.success('Cliente cadastrado com sucesso!')
+                        setLoadingButtons(false)
                     })
                     .catch((e)=>{
                         console.log(e);
                         toast.error('Erro ao cadastrar!')
+                        setLoadingButtons(false)
                     })  
                 }
-
+                
             })
-          
-         
+            
+            
         }
         else{
             toast.error('Preencha todos os campos!')
+            setLoadingButtons(false)
         }
         
     }
@@ -72,8 +79,7 @@ export default function Customers(){
     async function buscarCnpjReceita(e) {
         e.preventDefault()
         if(cnpj !== ''){
-            try {
-                // const response = await axios.get(`http://localhost:3002/buscaDadosReceita/${cnpj}`)       
+            try {    
                 const response = await axios.get(`https://60b50cb898de69e51d790ca6--optimistic-swartz-985c39.netlify.app/.netlify/functions/api/buscaDadosReceita/${cnpj.replace(/[^\d]+/g,'')}`)       
                 console.log(response.data) 
                 if(response.data.nome){
@@ -133,7 +139,7 @@ export default function Customers(){
                         <input type="text" value={bairro} onChange={e => setBairro(e.target.value)} />
                         <label>Cidade</label>
                         <input type="text" value={cidade} onChange={e => setCidade(e.target.value)} />
-                        <button type="submit" onClick={handleCadastar}>Cadastrar</button>
+                        <button type="submit" onClick={handleCadastar}>{loadingButtons ? 'Salvando...' : 'Cadastrar'}</button>
                     </form>
                     
                 </div>
