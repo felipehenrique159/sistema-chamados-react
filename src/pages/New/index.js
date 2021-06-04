@@ -47,7 +47,14 @@ export default function New(){
         e.preventDefault()
         let now = new Date();
         let dataAtual = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()}`
-        setLoadingButtons(true)
+       
+        if(customers[customersSelected].id === '' || assunto === ''){
+            toast.error('Preencha os campos obrigatórios')
+            return
+        }
+
+        setLoadingButtons(true)    
+
         if(idCustomers){  //edição
             await firebase.database().ref().child('chamados/' + id)
             .update({ 
@@ -108,7 +115,6 @@ export default function New(){
     }
    
     function handleChangeCustomers(e){
-        console.log('cliente selecionado' , customers[e.target.value].id);
         setCustomersSelected(e.target.value)
        
     }
